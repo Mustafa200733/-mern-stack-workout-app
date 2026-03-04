@@ -1,4 +1,5 @@
 import express from 'express';
+import Workout from '../models/Workout.js';
 
 const router = express.Router();
 
@@ -11,8 +12,16 @@ router.get('/:id', (req, res) => {
   res.json({ message: `GET workout ${id}` });
 });
 
-router.post('/', (req, res) => {
-  res.json({ message: 'POST workout', data: req.body });
+// POST nieuwe workout
+router.post('/', async (req, res) => {
+  const { title, load, reps } = req.body;
+
+  try {
+    const workout = await Workout.create({ title, reps, load });
+    res.status(201).json(workout);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 router.patch('/:id', (req, res) => {
