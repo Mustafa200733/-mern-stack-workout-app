@@ -7,7 +7,7 @@ const workoutSchema = new Schema({
   title: {
     type: String,
     required: true,
-    trim: true,        // Verwijdert spaties
+    trim: true,       
   maxlength: 100, 
   },
   reps: {
@@ -23,7 +23,6 @@ const workoutSchema = new Schema({
   timestamps: true
 });
 
-// Model = object voor maken/ophalen/aanpassen/verwijderen
 const Workout = mongoose.model('Workout', workoutSchema);
 
 export default Workout;
