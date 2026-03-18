@@ -4,18 +4,32 @@ function WorkoutForm({ refreshWorkouts }) {
   const [title, setTitle] = useState('');
   const [reps, setReps] = useState('');
   const [load, setLoad] = useState('');
+  const [error, setError] = useState('');
+
+  const validate = () => {
+    const missing = [];
+
+    if (!title.trim()) missing.push('Titel');
+    if (reps === '') missing.push('Reps');
+    if (load === '') missing.push('Load');
+
+    return missing.length ? `Vul in: ${missing.join(', ')}` : '';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !reps || !load) {
-      console.warn('Validatie fout: vul alle velden in');
-      alert('Vul alle velden in!');
+    const validationMessage = validate();
+    if (validationMessage) {
+      console.warn('Validatie fout:', validationMessage);
+      setError(validationMessage);
       return;
     }
 
+    setError('');
+
     const workout = { 
-      title, 
+      title: title.trim(),
       reps: Number(reps), 
       load: Number(load) 
     };
@@ -43,11 +57,11 @@ function WorkoutForm({ refreshWorkouts }) {
         refreshWorkouts(); // Refresh de lijst
       } else {
         console.error('Backend error:', data.error);
-        alert('Fout: ' + data.error);
+        setError(`Fout: ${data.error || 'Onbekende fout'}`);
       }
     } catch (error) {
       console.error('Fetch error:', error);
-      alert('Fout bij toevoegen: ' + error.message);
+      setError(`Fout bij toevoegen: ${error.message}`);
     }
   };
 
@@ -57,20 +71,34 @@ function WorkoutForm({ refreshWorkouts }) {
         type="text"
         placeholder="Titel"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => {
+          setTitle(e.target.value);
+          if (error) setError('');
+        }}
       />
       <input
         type="number"
         placeholder="Reps"
         value={reps}
-        onChange={(e) => setReps(e.target.value)}
+        onChange={(e) => {
+          setReps(e.target.value);
+          if (error) setError('');
+        }}
       />
       <input
         type="number"
         placeholder="Load (kg)"
         value={load}
-        onChange={(e) => setLoad(e.target.value)}
+        onChange={(e) => {
+          setLoad(e.target.value);
+          if (error) setError('');
+        }}
       />
+      {error ? (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      ) : null}
       <button type="submit">Toevoegen</button>
     </form>
   );
