@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, refreshWorkouts }) {
   const [title, setTitle] = useState(currentTitle);
   const [reps, setReps] = useState(currentReps);
   const [load, setLoad] = useState(currentLoad);
+
+  // Sync form values when the workout data changes (e.g. after refresh).
+  useEffect(() => {
+    setTitle(currentTitle);
+    setReps(currentReps);
+    setLoad(currentLoad);
+  }, [currentTitle, currentReps, currentLoad]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -26,7 +33,7 @@ function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, refr
       const response = await fetch(`http://127.0.0.1:4000/api/workouts/${workoutId}`, {
         method: 'PATCH',
         headers: {
-       
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedWorkout)
       });
