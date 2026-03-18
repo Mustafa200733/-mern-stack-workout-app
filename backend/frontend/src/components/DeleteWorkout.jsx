@@ -1,6 +1,4 @@
-import e from "cors";
-
-function DeleteWorkout({ workoutId, workoutTitle }) {
+function DeleteWorkout({ workoutId, workoutTitle, refreshWorkouts }) {
   
   const handleDelete = async () => {
     // Bevestiging vragen
@@ -9,20 +7,24 @@ function DeleteWorkout({ workoutId, workoutTitle }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/api/workouts/${workoutId}`, {
+      console.log('Deleting workout:', workoutId);
+      const response = await fetch(`http://127.0.0.1:4000/api/workouts/${workoutId}`, {
         method: 'DELETE'
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
 
       if (response.ok) {
         console.log('Workout verwijderd!', data);
-        // Verwijder uit UI of refresh lijst
+        refreshWorkouts(); // Refresh de lijst
       } else {
-        console.error('Error:', data.error);
+        console.error('Backend error:', data.error);
+        alert('Fout: ' + data.error);
       }
     } catch (error) {
       console.error('Fetch error:', error);
+      alert('Fout bij verwijderen: ' + error.message);
     }
   };
 
@@ -32,4 +34,5 @@ function DeleteWorkout({ workoutId, workoutTitle }) {
     </button>
   );
 }
+
 export default DeleteWorkout;

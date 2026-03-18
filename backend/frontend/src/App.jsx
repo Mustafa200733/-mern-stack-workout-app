@@ -1,48 +1,33 @@
 import { useEffect, useState } from 'react';
-import WorkoutForm from './components/WorkoutForm';
-import UpdateWorkout from './components/UpdateWorkout';
-import DeleteWorkout from './components/DeleteWorkout';
-
+import WorkoutForm from './components/WorkoutForm.jsx';
+import WorkoutList from './components/WorkoutList.jsx';
 
 function App() {
   const [workouts, setWorkouts] = useState([]);
-  const [title, setTitle] = useState('');
-  const [reps, setReps] = useState('');
-  const [load, setLoad] = useState('');
-  const [workoutForm, setWorkoutForm] = useState('');
-  const [updateWorkout, setUpdateForm] = useState('');
-  const [deleteWorkout, setDeleteForm] = useState('');
 
-
+  const refreshWorkouts = async () => {
+    try {
+      console.log('Fetching workouts...');
+      const response = await fetch('http://127.0.0.1:4000/api/workouts');
+      console.log('Response status:', response.status);
+      const data = await response.json();
+      console.log('Workouts fetched:', data);
+      setWorkouts(data);
+    } catch (error) {
+      console.error('Fetch Error:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchWorkouts = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/api/workouts');
-        const data = await response.json();
-        setWorkouts(data);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-
-    fetchWorkouts();
+    console.log('App mounted, refreshing workouts');
+    refreshWorkouts();
   }, []);
 
   return (
     <div className="App">
       <h1>Workouts</h1>
-      {workouts.length === 0 ? (
-        <p>Geen workouts gevonden</p>
-      ) : (
-        workouts.map(workout => (
-          <div key={workout._id}>
-            <h3>{workout.title}</h3>
-            <p>Reps: {workout.reps}</p>
-            <p>Load: {workout.load} kg</p>
-          </div>
-        ))
-      )}
+      <WorkoutForm refreshWorkouts={refreshWorkouts} />
+      <WorkoutList workouts={workouts} refreshWorkouts={refreshWorkouts} />
     </div>
   );
 }
