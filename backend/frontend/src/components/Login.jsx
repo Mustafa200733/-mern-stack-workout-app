@@ -1,22 +1,22 @@
 import { useState } from 'react';
-
+ 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
+ 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+ 
         try {
             const response = await fetch('http://localhost:4000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
-
+ 
             const data = await response.json();
-
+ 
             if (response.ok) {
                 // Sla token op
                 localStorage.setItem('token', data.token);
@@ -29,7 +29,7 @@ function Login() {
             console.error('Error:', error);
         }
     };
-
+ 
     return (
         <form onSubmit={handleLogin}>
             <input
@@ -49,3 +49,5 @@ function Login() {
         </form>
     );
 }
+ 
+export default Login;
